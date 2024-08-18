@@ -1,0 +1,50 @@
+# Implementing the pgvector extension for a PostgreSQL database
+# Sep 15, 2023
+# https://medium.com/@johannes.ocean/setting-up-a-postgres-database-with-the-pgvector-extension-10ab7ff212cc
+
+
+
+# https://github.com/pgvector/pgvector
+# -- SELECT * FROM pg_available_extensions where name like '%vector%';
+# -- INSERT INTO embeddings (text, embedding) VALUES ('123', '[1,2,3]'), ('456','[4,5,6]');
+# 
+# select
+# 	id,
+# 	text,
+# 	embedding,
+# 	'[1,2,5]' var,
+# 	l1_distance(embedding, '[1,2,5]') l1_distance,
+# 	(embedding <-> '[1,2,5]') l2_distance,
+# 	(embedding <=> '[1,2,5]') cosine_distance_,
+# 	(embedding <#> '[1,2,5]') negative_inner_product,
+# 	1 - (embedding <=> '[1,2,5]') as cosine_similarity
+# from
+# 	embeddings
+# order by
+# 	embedding <-> '[1,2,5]'
+# limit 5;
+
+# PostgreSQL+pg_vectorをUbuntu上に構成し、Streamlit×LangchainでRAGのWebアプリを作ってみる
+# https://zenn.dev/team_nishika/articles/481ecd7f48b8be
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: on-failure:2
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./initDB:/docker-entrypoint-initdb.d
+    environment:
+      TZ: 'Asia/Tokyo'
+      POSTGRES_DB: vectordb
+      POSTGRES_USER: "euler"
+      POSTGRES_PASSWORD: "12345678"
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

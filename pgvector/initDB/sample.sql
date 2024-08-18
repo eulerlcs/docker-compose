@@ -1,0 +1,25 @@
+-- DB作成
+CREATE DATABASE sample_db;
+-- 作成したDBに接続
+\c sample_db;
+-- テーブル作成
+DROP TABLE IF EXISTS sample;
+CREATE TABLE sample (
+	id integer NOT NULL PRIMARY KEY,
+	name char(100) NOT NULL,
+	created_date_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+-- ID用シーケンス作成
+CREATE SEQUENCE sample_id_seq START 1;
+-- サンブルデータの登録
+INSERT INTO sample (id, name) VALUES(nextval('sample_id_seq'), 'sample name');
+
+
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE IF NOT EXISTS embeddings (
+  id SERIAL PRIMARY KEY,
+  embedding vector,
+  text text,
+  created_at timestamptz DEFAULT now()
+);
